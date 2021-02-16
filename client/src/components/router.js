@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import {
   OpenDrawerAction,
   CloseDrawerAction,
-} from '../redux/actions/openDrawer';
+} from '../redux/actions/openDrawerAction';
 
 const Router = (props) => {
   const handleDrawerOpen = () => {
