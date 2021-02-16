@@ -13,20 +13,27 @@ import Explore from '../pages/explore';
 import Settings from '../pages/settings';
 import FourOhFour from '../pages/404';
 
-const Router = ({ ...props }) => {
-  const [open, setOpen] = React.useState(false);
+import { connect } from 'react-redux';
+import {
+  OpenDrawerAction,
+  CloseDrawerAction,
+} from '../redux/actions/openDrawer';
 
+const Router = (props) => {
   const handleDrawerOpen = () => {
-    setOpen(true);
+    props.OpenDrawerAction();
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    props.CloseDrawerAction();
   };
 
   return (
     <BrowserRouter>
-      <CustomDrawer {...{ open, handleDrawerClose }} />
+      <CustomDrawer
+        open={props.isOpen.isOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
 
       <OpenDrawerProvider value={handleDrawerOpen}>
         <Switch>
@@ -48,5 +55,11 @@ const Router = ({ ...props }) => {
     </BrowserRouter>
   );
 };
+const mapStateToProps = (state) => ({
+  isOpen: state.openDrawerReducer,
+});
 
-export default Router;
+export default connect(mapStateToProps, {
+  OpenDrawerAction,
+  CloseDrawerAction,
+})(Router);
