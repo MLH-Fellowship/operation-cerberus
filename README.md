@@ -26,8 +26,6 @@ Get started by installing the client and the server...
 
 ## Documentation
 
-Read the full docs [here](docs)...
-
 ### Echelon and beyond
 Below are various features that either have not been created or features that need to be refactored if needed:
 - Refactor to allow for multiple data files to uploaded at once

@@ -19,3 +19,6 @@ lib64
 
 # Node
 node_modules/
+
+# other folders
+uploads/*

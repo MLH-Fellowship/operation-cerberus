@@ -1,0 +1,5 @@
+problem,date,level,tag,time to Brute Force (minutes),time to optimal (minutes),time to implement (minutes),status,notes
+53. Maximum Subarray,2/6/2021,Easy,"Array, DP, D&C",N/A,N/A,N/A,solved,
+256. Paint House,2/7/2021,Medium,DP,N/A,N/A,N/A,solved,
+300. Longest Increasing Subsequence,2/8/2021,Medium,DP,90,N/A,N/A,had to look at solution,study corollaries
+368. Largest Divisible Subset,2/9/2021,Medium,"DP, Math",40,N/A,N/A,had to look at solution,think about corollaries; would sorting help if it's an array?

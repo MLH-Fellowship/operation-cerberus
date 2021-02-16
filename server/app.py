@@ -15,12 +15,9 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'json'}
 # initialize app and app settings
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLACHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 CORS(app)
-
-# display config
-# for item in app.config.items():
-#     print(item)
-
 
 @app.route('/')
 def index():
@@ -28,22 +25,32 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    print(request)
+    # make sure they're not uploading 0 files
+    if len(request.files) == 0:
+        return jsonify({'error': 'no file'})
+    
+    numUploaded = 0
     header = request.headers.get('Authorization')
-    upload_count = 0
+
+    # request.files is of "werkzeug.datastructures.ImmutableMultiDict"
+    for fileName, fileObj in request.files.items():
+        # make sure file has a name
+        if fileObj and fileName:
+            fileObj.save(f"uploads/{fileName}")
+            numUploaded += 1
 
     # if upload_count > 0, at least 1 file was uploaded
-    if upload_count > 0:
+    if numUploaded > 0:
         responseObj = {
             'status': 'success',
-            'uploads': 0,
-            'id': 'filename'
+            'uploads': numUploaded,
+            'id': fileName
         }
     else:
         responseObj = {
             'status': 'failure',
             'uploads': -1,
-            'id': 'filename'
+            'id': fileName
         }
     return jsonify(responseObj)
 
