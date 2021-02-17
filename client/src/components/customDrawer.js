@@ -33,28 +33,28 @@ const listData = [
   {
     to: '/',
     icon: <DashboardIcon />,
-    text: 'Overview'
+    text: 'Overview',
   },
   {
     to: '/travel',
     icon: <AirplaneIcon />,
-    text: 'Travel'
+    text: 'Travel',
   },
   {
     to: '/accounting',
     icon: <MoneyIcon />,
-    text: 'Accounting'
+    text: 'Accounting',
   },
   {
     to: '/reports',
     icon: <BarChartIcon />,
-    text: 'Reports'
+    text: 'Reports',
   },
   {
     to: '/integrations',
     icon: <LayersIcon />,
-    text: 'Integrations'
-  }
+    text: 'Integrations',
+  },
 ];
 
 const CustomDrawer = ({ open, handleDrawerClose }) => {
@@ -65,7 +65,7 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
       flexGrow: 1,
       justifyContent: 'flex-start',
       marginLeft: 20,
-      fontFamily: 'Teko'
+      fontFamily: 'Teko',
     },
     drawerPaper: {
       position: 'relative',
@@ -73,27 +73,27 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
       width: drawerWidth,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
-      })
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     drawerPaperClose: {
       overflowX: 'hidden',
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
+        duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9)
-      }
+        width: theme.spacing(9),
+      },
     },
     toolbarIcon: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-end',
       padding: '0 8px',
-      ...theme.mixins.toolbar
-    }
+      ...theme.mixins.toolbar,
+    },
   }));
 
   const DrawerItem = ({ to, icon, text }, key) => {
@@ -118,13 +118,15 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
     const [pageName, setPageName] = React.useState('');
 
     const updateList = () => {
-      setFullList(listData => [...listData, {
-                                              to: '/travel',
-                                              icon: <LayersIcon />,
-                                              text: pageName
-                                            }])
-    }
-
+      setFullList((listData) => [
+        ...listData,
+        {
+          to: '/travel',
+          icon: <LayersIcon />,
+          text: pageName,
+        },
+      ]);
+    };
 
     return (
       <Dialog
@@ -144,10 +146,14 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
           <Button onClick={onClose} color='primary'>
             Close
           </Button>
-          <Button onClick={() => {
-                                  updateList();
-                                  onClose();
-                                  }} color='primary' autoFocus>
+          <Button
+            onClick={() => {
+              updateList();
+              onClose();
+            }}
+            color='primary'
+            autoFocus
+          >
             Create
           </Button>
         </DialogActions>
@@ -158,7 +164,7 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
   SimpleDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    selectedValue: PropTypes.string.isRequired
+    selectedValue: PropTypes.string.isRequired,
   };
 
   const classes = useStyles();
@@ -167,7 +173,7 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
     <Drawer
       variant='temporary'
       classes={{
-        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
       }}
       open={open}
       onClose={handleDrawerClose}

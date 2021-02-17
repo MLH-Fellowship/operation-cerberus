@@ -22,7 +22,7 @@ import { NavLink, Link } from 'react-router-dom';
 
 const listItems = [
   { to: '/explore', title: 'Explore', icon: <ExploreIcon /> },
-  { to: '/settings', title: 'Settings', icon: <SettingsIcon /> }
+  { to: '/settings', title: 'Settings', icon: <SettingsIcon /> },
 ];
 
 const CustomAppBar = ({ title }) => {
@@ -51,20 +51,20 @@ const CustomAppBar = ({ title }) => {
 
   const useStyles = makeStyles((theme) => ({
     toolbar: {
-      paddingRight: 24
+      paddingRight: 24,
     },
     appBar: {
-      zIndex: theme.zIndex.drawer + 1
+      zIndex: theme.zIndex.drawer + 1,
     },
     menuButton: {
-      marginRight: 36
+      marginRight: 36,
     },
     title: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     activeRoute: {
-      color: theme.palette.secondary.main
-    }
+      color: theme.palette.secondary.main,
+    },
   }));
 
   const classes = useStyles();
