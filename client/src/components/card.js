@@ -40,11 +40,11 @@ const Card = ({ header, content, seeMore, second, graph }) => {
       display: 'flex',
       overflow: 'auto',
       flexDirection: 'column',
-      minWidth: 275
+      minWidth: 275,
     },
     saveButton: {
-      marginLeft: 'auto'
-    }
+      marginLeft: 'auto',
+    },
   }));
 
   const classes = useStyles();
