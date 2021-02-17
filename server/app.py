@@ -22,6 +22,8 @@ CORS(app)
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
+from models import User
+
 @app.route('/')
 def index():
     return 'Hello World'
