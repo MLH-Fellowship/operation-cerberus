@@ -2,8 +2,9 @@
 import os
 
 # flask stuff
-from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 # load environment variables
@@ -15,9 +16,11 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'json'}
 # initialize app and app settings
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLACHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
+
+bcrypt = Bcrypt(app)
+db = SQLAlchemy(app)
 
 @app.route('/')
 def index():
