@@ -7,17 +7,17 @@ import '../assets/styles/layout.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex'
+    display: 'flex',
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
     height: '100vh',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   container: {
-    paddingTop: theme.spacing(5)
-  }
+    paddingTop: theme.spacing(5),
+  },
 }));
 
 const Layout = ({ children, title, thin }) => {
@@ -37,7 +37,7 @@ const Layout = ({ children, title, thin }) => {
 };
 
 Layout.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default Layout;

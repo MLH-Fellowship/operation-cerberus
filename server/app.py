@@ -2,8 +2,11 @@
 import os
 
 # flask stuff
-from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from flask_bcrypt import Bcrypt
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 # load environment variables
@@ -14,11 +17,25 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'json'}
 
 # initialize app and app settings
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLACHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 CORS(app)
 
+app.config['FLASK_ADMIN_SWATCH'] = 'slate' # admin teheme
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(os.environ['APP_SETTINGS'])
+# for row in app.config.items():
+#     print(row)
+# set up db & bcrypt
+bcrypt = Bcrypt(app)
+db = SQLAlchemy(app)
+
+# import models
+from models import User
+
+# setup admin and admin (model) views
+admin = Admin(app, name='Echelon - Money in the Bank', template_mode='bootstrap3')
+admin.add_view(ModelView(User, db.session))
+
+# main API views
 @app.route('/')
 def index():
     return 'Hello World'
@@ -53,6 +70,7 @@ def upload():
             'id': fileName
         }
     return jsonify(responseObj)
+
 
 if __name__ == "__main__":
     app.run()
