@@ -21,4 +21,4 @@ lib64
 node_modules/
 
 # other folders
-uploads/*
+server/uploads/*
