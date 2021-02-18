@@ -1,6 +1,6 @@
 from app import db, app, bcrypt
 from sqlalchemy.dialects.postgresql import JSON
-
+import jwt
 import datetime
 
 class User(db.Model):

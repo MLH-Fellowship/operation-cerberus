@@ -15,7 +15,7 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'json'}
 
 # initialize app and app settings
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config.from_object(os.getenv('APP_SETTINGS'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
