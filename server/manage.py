@@ -29,7 +29,6 @@ def create_db():
     """Creates the db tables."""
     db.create_all()
 
-
 @manager.command
 def drop_db():
     """Drops the db tables."""
