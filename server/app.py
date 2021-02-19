@@ -40,6 +40,11 @@ admin.add_view(ModelView(User, db.session))
 def index():
     return 'Hello World'
 
+@app.route('/users', methods=['GET'])
+def users():
+    entries = users
+    return Flask.jsonify(entries)
+
 @app.route('/upload', methods=['POST'])
 def upload():
     # make sure they're not uploading 0 files
@@ -71,6 +76,8 @@ def upload():
         }
     return jsonify(responseObj)
 
+from auth.views import auth_blueprint
+app.register_blueprint(auth_blueprint)
 
 if __name__ == "__main__":
     app.run()
