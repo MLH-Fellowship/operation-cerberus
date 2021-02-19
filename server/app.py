@@ -22,8 +22,7 @@ CORS(app)
 app.config['FLASK_ADMIN_SWATCH'] = 'slate' # admin teheme
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_object(os.environ['APP_SETTINGS'])
-# for row in app.config.items():
-#     print(row)
+
 # set up db & bcrypt
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
@@ -71,6 +70,8 @@ def upload():
         }
     return jsonify(responseObj)
 
+# @app.route('/database', methods=['GET'])
+# def get_database
 
 if __name__ == "__main__":
     app.run()
