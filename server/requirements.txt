@@ -2,6 +2,7 @@ alembic==1.5.4
 bcrypt==3.2.0
 cffi==1.14.5
 click==7.1.2
+cryptography==3.4.6
 Flask==1.1.2
 Flask-Admin==1.5.7
 Flask-Bcrypt==0.7.1
@@ -11,10 +12,10 @@ Flask-Script==2.0.6
 Flask-SQLAlchemy==2.4.4
 itsdangerous==1.1.0
 Jinja2==2.11.3
+jwt==1.2.0
 Mako==1.1.4
 MarkupSafe==1.1.1
 psycopg2==2.8.6
-PyJWT==2.0.1
 pycparser==2.20
 python-dateutil==2.8.1
 python-dotenv==0.15.0
