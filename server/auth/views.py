@@ -108,15 +108,18 @@ class UserAPI(MethodView):
             auth_token = ''
         if auth_token:
             resp = User.decode_auth_token(auth_token)
+            print("this is resp", resp)
             if not isinstance(resp, str):
-                user = User.query.filter_by(id=resp).first()
+                user = User.query.filter_by(id=resp["sub"]).first()
                 responseObject = {
                     'status': 'success',
                     'data': {
                         'user_id': user.id,
                         'email': user.email,
                         'admin': user.admin,
-                        'registered_on': user.registered_on
+                        'registered_on': user.registered_on,
+                        'exp':resp["exp"],
+                        'iat':resp["iat"]
                     }
                 }
                 return make_response(jsonify(responseObject)), 200
