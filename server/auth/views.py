@@ -14,6 +14,7 @@ class RegisterAPI(MethodView):
 
     def post(self):
         # get the post data
+        print(request)
         post_data = request.get_json()
         # check if user already exists
         user = User.query.filter_by(email=post_data.get('email')).first()
@@ -57,7 +58,6 @@ class LoginAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
-        print(post_data)
         try:
             # fetch the user data
             user = User.query.filter_by(
@@ -147,6 +147,7 @@ class LogoutAPI(MethodView):
             auth_token = ''
         if auth_token:
             resp = User.decode_auth_token(auth_token)
+            print("resp", resp)
             if not isinstance(resp, str):
                 # mark the token as blacklisted
                 blacklist_token = BlacklistToken(token=auth_token)
