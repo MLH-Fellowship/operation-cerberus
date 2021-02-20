@@ -45,8 +45,11 @@ const Import = ({ allowNext, setFileID }) => {
         file.map(({ file }) => {
             return formData.append(file.name, file, file.name);
         });
-        console.log(file);
+        let reader = new FileReader();
+        // console.log(file);
         console.log(file[0].file);
+        reader.readAsText(file[0].file, "UTF-8");
+        console.log(reader);
 
         // upload file
         fetch('http://localhost:5000/upload', {
@@ -117,13 +120,13 @@ const Import = ({ allowNext, setFileID }) => {
                 {file?.length > 0 && !result && (
                 <>
                     {file.map(({ file }, key) => (
-                    <Chip
-                        size='medium'
-                        label={file.name}
-                        onDelete={() => deleteFile(key)}
-                        className={classes.chip}
-                        key={key}
-                    />
+                        <Chip
+                            size='medium'
+                            label={file.name}
+                            onDelete={() => deleteFile(key)}
+                            className={classes.chip}
+                            key={key}
+                        />
                     ))}
                     {file?.length > 5 && (
                     <Chip
