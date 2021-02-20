@@ -75,8 +75,11 @@ def upload():
         }
     return jsonify(responseObj)
 
+<<<<<<< HEAD
 # @app.route('/database', methods=['GET'])
 # def get_database
+=======
+>>>>>>> a9aa46b099813fe7d3fa12e1b6970b2db3ae71e6
 from auth.views import auth_blueprint
 app.register_blueprint(auth_blueprint)
 
