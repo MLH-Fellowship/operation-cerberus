@@ -14,6 +14,7 @@ class RegisterAPI(MethodView):
 
     def post(self):
         # get the post data
+        print(request)
         post_data = request.get_json()
         # check if user already exists
         user = User.query.filter_by(email=post_data.get('email')).first()
