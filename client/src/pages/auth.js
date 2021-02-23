@@ -99,7 +99,6 @@ const Auth = () => {
                             color='primary'
                             className={classes.submit}
                             type="submit"
-                            // type="submit"
                         >
                             Log In
                         </Button>
