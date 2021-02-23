@@ -15,6 +15,10 @@ manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)
 
+# python3 manage.py db init
+# python3 manage.py db migrate
+# python3 manage.py db upgrade
+
 @manager.command
 def test():
     """Runs the unit tests without test coverage."""

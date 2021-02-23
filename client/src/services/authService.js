@@ -1,3 +1,4 @@
+import axios from '../api';
 const API_URL = 'http://localhost:5000/auth';
 
 const login = (username, password, setLoginFail) => {
