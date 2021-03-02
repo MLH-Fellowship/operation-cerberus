@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -15,16 +16,20 @@ class Config(object):
     # SECRET_KEY = os.getenv('SECRET_KEY', 'myprecious')
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
+
 class ProductionConfig(Config):
     DEBUG = False
+
 
 class StagingConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
     DEVELOPMENT = True
+
 
 class TestingConfig(Config):
     TESTING = True
