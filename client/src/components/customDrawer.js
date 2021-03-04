@@ -25,6 +25,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
+import { useDispatch } from 'react-redux';
 
 const drawerWidth = 240;
 const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -57,8 +58,9 @@ const listData = [
   },
 ];
 
-const CustomDrawer = ({ open, handleDrawerClose }) => {
+const CustomDrawer = ({ open, CloseDrawerAction }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
+  const dispatch = useDispatch();
 
   const useStyles = makeStyles((theme) => ({
     drawerHeader: {
@@ -105,7 +107,11 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
         isActive={(match) => setSelected(Boolean(match))}
         key={key}
       >
-        <ListItem button onClick={handleDrawerClose} selected={selected}>
+        <ListItem
+          button
+          onClick={() => dispatch(CloseDrawerAction())}
+          selected={selected}
+        >
           <ListItemIcon>{icon}</ListItemIcon>
           <ListItemText primary={text} />
         </ListItem>
@@ -176,7 +182,8 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
         paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
       }}
       open={open}
-      onClose={handleDrawerClose}
+      onClose={() => dispatch(CloseDrawerAction())}
+      // onClose={CloseDrawerAction}
       disablebackdroptransition={Boolean(!iOS).toString()}
       disablediscovery={iOS.toString()}
     >
@@ -192,7 +199,7 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
         >
           Echelon
         </Typography>
-        <IconButton onClick={handleDrawerClose}>
+        <IconButton onClick={() => dispatch(CloseDrawerAction())}>
           <ChevronLeftIcon />
         </IconButton>
       </div>

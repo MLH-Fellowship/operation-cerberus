@@ -40,19 +40,19 @@ const Theme = ({ children }) => {
     palette: {
       type: mode,
       primary: {
-        main: getPrimary()
+        main: getPrimary(),
       },
       secondary: {
-        main: getSecondary()
-      }
-    }
+        main: getSecondary(),
+      },
+    },
   });
 
   return (
     <ThemeProvider {...{ theme }}>
       <CssBaseline />
       {React.cloneElement(children, {
-        ...{ mode, modeToggle, setPrimary, setSecondary }
+        ...{ mode, modeToggle, setPrimary, setSecondary },
       })}
     </ThemeProvider>
   );

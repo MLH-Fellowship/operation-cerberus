@@ -12,30 +12,24 @@ import Integrations from '../pages/integrations';
 import Explore from '../pages/explore';
 import Settings from '../pages/settings';
 import FourOhFour from '../pages/404';
-
-import { connect } from 'react-redux';
 import {
   OpenDrawerAction,
   CloseDrawerAction,
 } from '../redux/actions/openDrawerAction';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Router = (props) => {
-  const handleDrawerOpen = () => {
-    props.OpenDrawerAction();
-  };
-
-  const handleDrawerClose = () => {
-    props.CloseDrawerAction();
-  };
+  const openDrawer = useSelector((state) => state.openDrawerReducer);
+  const dispatch = useDispatch();
 
   return (
     <BrowserRouter>
       <CustomDrawer
-        open={props.isOpen.isOpen}
-        handleDrawerClose={handleDrawerClose}
+        open={openDrawer.isOpen}
+        CloseDrawerAction={CloseDrawerAction}
       />
 
-      <OpenDrawerProvider value={handleDrawerOpen}>
+      <OpenDrawerProvider value={() => dispatch(OpenDrawerAction())}>
         <Switch>
           <Route exact path='/auth' component={Auth} />
           <ProtectedRoute exact path='/' component={Home} />
@@ -55,11 +49,5 @@ const Router = (props) => {
     </BrowserRouter>
   );
 };
-const mapStateToProps = (state) => ({
-  isOpen: state.openDrawerReducer,
-});
 
-export default connect(mapStateToProps, {
-  OpenDrawerAction,
-  CloseDrawerAction,
-})(Router);
+export default Router;

@@ -27,6 +27,7 @@ const listItems = [
 
 const CustomAppBar = ({ title }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  
   const setOpen = React.useContext(OpenDrawerContext);
 
   const MenuItem = ({ to, title, icon }) => {
