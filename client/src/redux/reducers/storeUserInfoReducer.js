@@ -17,7 +17,6 @@ const storeUserInfoReducer = (state = initialState, action) => {
         currUserFetching: true,
       };
     case GET_USER_SUCCESS:
-      console.log(action.payload, 'REDUCER');
       return {
         ...state,
         ...action.payload,

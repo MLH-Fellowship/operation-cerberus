@@ -10,6 +10,8 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 
+import SignUpUser from '../components/SignUpUser';
+
 const Settings = ({ modeToggle, mode, setPrimary, setSecondary }) => {
   const SettingItem = ({ label, control }) => {
     return (
@@ -41,6 +43,14 @@ const Settings = ({ modeToggle, mode, setPrimary, setSecondary }) => {
 
   return (
     <Layout title='Settings' thin>
+      <div className={classes.section}>
+        <Typography variant='h4' component='h2' gutterBottom>
+          Register User
+        </Typography>
+        <Divider />
+        <SignUpUser/>
+      </div>
+
       <div className={classes.section}>
         <Typography variant='h4' component='h2' gutterBottom>
           Units
