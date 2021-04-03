@@ -9,8 +9,9 @@ import Container from '@material-ui/core/Container';
 import Grow from '@material-ui/core/Grow';
 import { DropzoneAreaBase } from 'material-ui-dropzone';
 import { makeStyles } from '@material-ui/core/styles';
+import reformatData from '../hooks/reformatData';
 
-const Import = ({ allowNext, setFileID }) => {
+const Import = ({ allowNext, setFileID, setFileData }) => {
     const [file, setFile] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const [result, setResult] = React.useState(null);
@@ -29,27 +30,12 @@ const Import = ({ allowNext, setFileID }) => {
         setFile([]);
     };
 
-    const importFiles = () => {
+    const importFiles = async () => {
         setLoading(true);
-
-        // setTimeout(() => {
-        //   setLoading(false);
-        //   setResult({
-        //     severity: 'success',
-        //     message: `File successfully imported.`
-        //   });
-        //   allowNext(true);
-        // }, 3500);
-        // console.log(file);
         const formData = new FormData();
         file.map(({ file }) => {
             return formData.append(file.name, file, file.name);
         });
-        let reader = new FileReader();
-        // console.log(file);
-        console.log(file[0].file);
-        reader.readAsText(file[0].file, "UTF-8");
-        console.log(reader);
 
         // upload file
         fetch('http://localhost:5000/upload', {
@@ -59,32 +45,126 @@ const Import = ({ allowNext, setFileID }) => {
             },
             body: formData
         })
-            .then((res) => {
-                res.json().then(({ status, uploads, id }) => {
-                    setLoading(false);
-                    if (status === 'success') {
-                        setResult({
-                            severity: 'success',
-                            message: `${uploads} file(s) successfully imported.`
-                        });
-                        setFileID(id);
-                        allowNext(true);
-                    } else {
-                        setResult({
-                            severity: 'warning',
-                            message: 'File import failed, please try again.'
-                        });
-                    }
-                });
-            })
-            .catch((e) => {
+        .then((res) => {
+            res.json().then(({ status, uploads, id }) => {
                 setLoading(false);
-                setResult({
-                severity: 'error',
-                message:
-                    'A critical error has occurred, please contact an administrator.'
-                });
+                if (status === 'success') {
+                    setResult({
+                        severity: 'success',
+                        message: `${uploads} file(s) successfully imported.`
+                    });
+                    setFileID(id);
+                    allowNext(true);
+                } else {
+                    setResult({
+                        severity: 'warning',
+                        message: 'File import failed, please try again.'
+                    });
+                }
             });
+        })
+        .catch((e) => {
+            setLoading(false);
+            setResult({
+            severity: 'error',
+            message:
+                'A critical error has occurred, please contact an administrator.'
+            });
+        });
+        
+        const txt = await file[0].file.text();
+        function CSVToArray( strData, strDelimiter ) {
+            // Check to see if the delimiter is defined. If not,
+            // then default to comma.
+            strDelimiter = (strDelimiter || ",");
+    
+            // Create a regular expression to parse the CSV values.
+            var objPattern = new RegExp(
+                (
+                    // Delimiters.
+                    "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+    
+                    // Quoted fields.
+                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+    
+                    // Standard fields.
+                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
+                ),
+                "gi"
+                );
+    
+    
+            // Create an array to hold our data. Give the array
+            // a default empty first row.
+            var arrData = [[]];
+    
+            // Create an array to hold our individual pattern
+            // matching groups.
+            var arrMatches = null;
+    
+    
+            // Keep looping over the regular expression matches
+            // until we can no longer find a match.
+            while (arrMatches = objPattern.exec( strData )){
+    
+                // Get the delimiter that was found.
+                var strMatchedDelimiter = arrMatches[ 1 ];
+    
+                // Check to see if the given delimiter has a length
+                // (is not the start of string) and if it matches
+                // field delimiter. If id does not, then we know
+                // that this delimiter is a row delimiter.
+                if (
+                    strMatchedDelimiter.length &&
+                    strMatchedDelimiter !== strDelimiter
+                    ){
+    
+                    // Since we have reached a new row of data,
+                    // add an empty row to our data array.
+                    arrData.push( [] );
+    
+                }
+    
+                var strMatchedValue;
+    
+                // Now that we have our delimiter out of the way,
+                // let's check to see which kind of value we
+                // captured (quoted or unquoted).
+                if (arrMatches[ 2 ]){
+    
+                    // We found a quoted value. When we capture
+                    // this value, unescape any double quotes.
+                    strMatchedValue = arrMatches[ 2 ].replace(
+                        new RegExp( "\"\"", "g" ),
+                        "\""
+                        );
+    
+                } else {
+    
+                    // We found a non-quoted value.
+                    strMatchedValue = arrMatches[ 3 ];
+    
+                }
+    
+    
+                // Now that we have our value string, let's add
+                // it to the data array.
+                arrData[ arrData.length - 1 ].push( strMatchedValue );
+            }
+    
+            // Return the parsed data.
+            return( arrData );
+        }
+        const data = CSVToArray(txt, ",");
+        let firstCol = [], secondCol = [];
+        for (let i in data) {
+            if (i > 0 && i < data.length - 1) {
+                firstCol.push(data[i][0]);
+                secondCol.push(parseFloat(data[i][1].substring(1).replace(",", "")));
+            }
+        }
+        // update file data state
+        setFileData((reformatData(firstCol, secondCol, file[0].file.name.split('_')[0])));
     };
 
     const selectFiles = (files) => {
@@ -179,9 +259,8 @@ const Import = ({ allowNext, setFileID }) => {
                             Retry
                         </Button>
                         )
-                    }
-                    >
-                    {result?.message}
+                    }>
+                        {result?.message}
                     </Alert>
                 </Grow>
                 )}

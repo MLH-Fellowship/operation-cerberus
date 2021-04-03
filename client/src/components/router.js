@@ -20,43 +20,44 @@ import {
 } from '../redux/actions/openDrawerAction';
 
 const Router = (props) => {
-  const handleDrawerOpen = () => {
-    props.OpenDrawerAction();
-  };
+    const handleDrawerOpen = () => {
+        props.OpenDrawerAction();
+    };
 
-  const handleDrawerClose = () => {
-    props.CloseDrawerAction();
-  };
+    const handleDrawerClose = () => {
+        props.CloseDrawerAction();
+    };
 
-  return (
-    <BrowserRouter>
-      <CustomDrawer
-        open={props.isOpen.isOpen}
-        handleDrawerClose={handleDrawerClose}
-      />
+    return (
+        <BrowserRouter>
+        <CustomDrawer
+            open={props.isOpen.isOpen}
+            handleDrawerClose={handleDrawerClose}
+        />
 
-      <OpenDrawerProvider value={handleDrawerOpen}>
-        <Switch>
-          <Route exact path='/auth' component={Auth} />
-          <ProtectedRoute exact path='/' component={Home} />
-          <ProtectedRoute exact path='/travel' component={Travel} />
-          <ProtectedRoute exact path='/accounting' component={Accounting} />
-          <ProtectedRoute exact path='/reports' component={Reports} />
-          <ProtectedRoute exact path='/integrations' component={Integrations} />
-          <ProtectedRoute exact path='/explore' component={Explore} />
-          <ProtectedRoute
-            exact
-            path='/settings'
-            component={() => <Settings {...props} />}
-          />
-          <ProtectedRoute path='*' component={FourOhFour} />
-        </Switch>
-      </OpenDrawerProvider>
-    </BrowserRouter>
-  );
+        <OpenDrawerProvider value={handleDrawerOpen}>
+            <Switch>
+                <Route exact path='/auth' component={Auth} />
+                <ProtectedRoute exact path='/' component={Home} />
+                <ProtectedRoute exact path='/travel' component={Travel} />
+                <ProtectedRoute exact path='/accounting' component={Accounting} />
+                <ProtectedRoute exact path='/reports' component={Reports} />
+                <ProtectedRoute exact path='/integrations' component={Integrations} />
+                <ProtectedRoute exact path='/explore' component={Explore} />
+                <ProtectedRoute
+                    exact
+                    path='/settings'
+                    component={() => <Settings {...props} />}
+                />
+                <ProtectedRoute path='*' component={FourOhFour} />
+            </Switch>
+        </OpenDrawerProvider>
+        </BrowserRouter>
+    );
 };
+
 const mapStateToProps = (state) => ({
-  isOpen: state.openDrawerReducer,
+    isOpen: state.openDrawerReducer,
 });
 
 export default connect(mapStateToProps, {

@@ -5,22 +5,22 @@ const initialState = {
 };
 
 const openDrawerReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case OPEN_DRAWER:
-      return {
-        ...state,
-        isOpen: true,
-      };
+    switch (action.type) {
+        case OPEN_DRAWER:
+            return {
+                ...state,
+                isOpen: true,
+            };
 
-    case CLOSE_DRAWER:
-      return {
-        ...state,
-        isOpen: false,
-      };
+        case CLOSE_DRAWER:
+            return {
+                ...state,
+                isOpen: false,
+            };
 
-    default:
-      return state;
-  }
+        default:
+            return state;
+    }
 };
 
 export default openDrawerReducer;
