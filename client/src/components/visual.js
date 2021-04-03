@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -32,7 +32,7 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
     setFilters(target.value);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (xval && yval && visual) {
       allowNext(true);
     } else {
@@ -40,7 +40,7 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
     }
   }, [xval, yval, visual]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     console.log(fileID);
     fetch(`http://localhost:5000/database?id=${fileID}`).then((res) =>
       res.json().then((json) => console.log(json))
@@ -72,23 +72,23 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
       </Container>
       <Grid container justify='center' spacing={3} className={classes.spacing}>
         <Grid item>
-          <TextField
-            select
-            label='Visual'
-            variant='filled'
-            name='visual'
-            value={visual}
-            onChange={chartChange}
-            defaultValue=''
-            className={classes.select}
-          >
-            <MenuItem value={'bar'}>Bar</MenuItem>
-            <MenuItem value={'pie'}>Pie</MenuItem>
-            <MenuItem value={'line'}>Line</MenuItem>
-          </TextField>
+            <TextField
+                select
+                label='Visual'
+                variant='filled'
+                name='visual'
+                value={visual}
+                onChange={chartChange}
+                defaultValue=''
+                className={classes.select}
+            >
+                <MenuItem value={'bar'}>Bar</MenuItem>
+                <MenuItem value={'pie'}>Pie</MenuItem>
+                <MenuItem value={'line'}>Line</MenuItem>
+            </TextField>
         </Grid>
         <Grid item>
-          <TextField
+            <TextField
             select
             label='X-value'
             variant='filled'
@@ -96,13 +96,13 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
             value={xval}
             onChange={chartChange}
             className={classes.select}
-          >
-            {valueOptions.map((item) => (
-              <MenuItem value={item.val} disabled={item.val === yval}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </TextField>
+            >
+                {valueOptions.map((item) => (
+                    <MenuItem value={item.val} disabled={item.val === yval}>
+                    {item.label}
+                    </MenuItem>
+                ))}
+            </TextField>
         </Grid>
         <Grid item>
           <TextField

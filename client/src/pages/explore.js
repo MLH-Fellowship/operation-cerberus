@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Layout from '../components/layout';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
@@ -20,19 +20,24 @@ import Orders from '../components/recent';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const Explore = () => {
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [canProceed, setCanProceed] = React.useState(false);
-    const [visual, setVisual] = React.useState(null);
-    const [fileID, setFileID] = React.useState(null);
-    const [title, setTitle] = React.useState('Visual Preview');
-    const [xval, setXVal] = React.useState('');
-    const [yval, setYVal] = React.useState('');
+    const [activeStep, setActiveStep] = useState(0);
+    const [canProceed, setCanProceed] = useState(false);
+    const [visual, setVisual] = useState(null);
+    const [fileID, setFileID] = useState(null);
+    const [title, setTitle] = useState('Visual Preview');
+    const [xval, setXVal] = useState('');
+    const [yval, setYVal] = useState('');
+    const [fileData, setFileData] = useState({});
 
-    const chartRef = React.useRef(null);
-    const link = React.useRef(null);
-    const final = React.useRef(null);
+    const chartRef = useRef(null);
+    const link = useRef(null);
+    const final = useRef(null);
     const theme = useTheme();
-    const data = useData();
+    const data = useData([], []);
+
+    // useEffect(() => {
+    //     console.log(fileData);
+    // })
 
     const chartChange = ({ target }) => {
         const { name, value } = target;
@@ -129,7 +134,7 @@ const Explore = () => {
     const steps = [
         {
             label: 'Import data',
-            content: <Import {...{ allowNext, setFileID }} />
+            content: <Import {...{ allowNext, setFileID, setFileData }} />
         },
         // { label: 'Join sets', content: <Join {...{ allowNext }} /> },
         {
@@ -187,7 +192,8 @@ const Explore = () => {
                     <Zoom in={true}>
                     <Card
                         header={title}
-                        content={<Chart {...{ data, type: visual }} />}
+                        content={<Chart data={fileData} type={visual} />}
+                        // content={<Chart {...{  fileData, type: visual }} />}
                     />
                     </Zoom>
                 )}
