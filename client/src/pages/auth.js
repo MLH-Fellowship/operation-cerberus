@@ -8,7 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import { getCurrentUser, login } from '../services/authService';
+import { getCurrentUser } from '../services/authService';
 import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';

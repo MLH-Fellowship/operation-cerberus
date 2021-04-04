@@ -38,7 +38,7 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
     } else {
       allowNext(false);
     }
-  }, [xval, yval, visual]);
+  }, [xval, yval, visual, allowNext]);
 
   useEffect(() => {
     console.log(fileID);

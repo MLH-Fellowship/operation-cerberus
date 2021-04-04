@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/layout';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
@@ -10,14 +11,16 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Chart from '../components/chart';
 import Card from '../components/card';
 import html2canvas from 'html2canvas';
-import useData from '../hooks/useData';
+// import useData from '../hooks/useData';
 import Import from '../components/import';
 import Visual from '../components/visual';
 import Customize from '../components/customize';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Orders from '../components/recent';
+// import Typography from '@material-ui/core/Typography';
+// import Orders from '../components/recent';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { pinChart } from '../redux/actions/chartActions';
+
 
 const Explore = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -29,15 +32,15 @@ const Explore = () => {
     const [yval, setYVal] = useState('');
     const [fileData, setFileData] = useState({});
 
+    // dispatch for chart
+    const dispatch = useDispatch();
+    const chart = useSelector(state => state.chart);
+
     const chartRef = useRef(null);
     const link = useRef(null);
     const final = useRef(null);
     const theme = useTheme();
-    const data = useData([], []);
-
-    // useEffect(() => {
-    //     console.log(fileData);
-    // })
+    // const data = useData([], []);
 
     const chartChange = ({ target }) => {
         const { name, value } = target;
@@ -74,13 +77,18 @@ const Explore = () => {
         });
     };
 
+    const pinOverview = () => {
+        // store fileData in redux store
+        dispatch(pinChart(fileData, title));
+    }
+
     const allowNext = (bool) => {
         setCanProceed(bool);
     };
 
-    const handleReset = () => {
-        setActiveStep(0);
-    };
+    // const handleReset = () => {
+    //     setActiveStep(0);
+    // };
 
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
@@ -216,7 +224,12 @@ const Explore = () => {
                     </Button>
                     </Grid>
                     <Grid item>
-                    <Button color='primary'>Pin to overview</Button>
+                    <Button 
+                        color='primary'
+                        onClick={pinOverview}
+                    >
+                        Pin to Overview
+                    </Button>
                     </Grid>
 
                     <a ref={link} />

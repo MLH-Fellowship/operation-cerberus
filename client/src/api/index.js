@@ -1,5 +1,4 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:5000/auth';
 
 export default axios.create({
   baseURL: 'http://localhost:5000/auth',
@@ -17,7 +16,7 @@ export const getUserInfo = (email, password) => {
           'user',
           JSON.stringify({
             email: email,
-            password: password,
+            // password: password,
             token: res.data.auth_token,
           })
         );
