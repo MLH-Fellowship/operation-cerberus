@@ -17,11 +17,25 @@ const storeUserInfoReducer = (state = initialState, action) => {
         currUserFetching: true,
       };
     case GET_USER_SUCCESS:
+        // localStorage.setItem(
+        //     'payload',
+        //     JSON.stringify({
+        //         payload: action.payload
+        //     })
+        // );
+        // localStorage.setItem(
+        //     'user',
+        //     JSON.stringify({
+        //       email: email,
+        //       // password: password,
+        //       token: res.data.auth_token,
+        //     })
+        // );
       console.log(action.payload, 'REDUCER');
       return {
         ...state,
         ...action.payload,
-        currUserFetching: false,
+        currUserFetching: true,
       };
     case GET_USER_FAILED:
       return {

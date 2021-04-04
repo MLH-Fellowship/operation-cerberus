@@ -22,7 +22,7 @@ const reformatData = (in_labels, in_data, fname) => {
     };
 
     let color;
-    if (fname == 'army') {
+    if (fname === 'army') {
         color = 'green';
     } else {
         color = 'blue';

@@ -164,7 +164,7 @@ const CustomDrawer = ({ open, handleDrawerClose }) => {
   SimpleDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    selectedValue: PropTypes.string.isRequired,
+    // selectedValue: PropTypes.string.isRequired,
   };
 
   const classes = useStyles();
