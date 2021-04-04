@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/layout';
 import Container from '@material-ui/core/Container';
@@ -31,6 +31,7 @@ const Explore = () => {
     const [xval, setXVal] = useState('');
     const [yval, setYVal] = useState('');
     const [fileData, setFileData] = useState({});
+    const [flash, setFlash] = useState('');
 
     // dispatch for chart
     const dispatch = useDispatch();
@@ -41,6 +42,15 @@ const Explore = () => {
     const final = useRef(null);
     const theme = useTheme();
     // const data = useData([], []);
+
+    useEffect(() => {
+        if (Object.keys(chart).length > 0 && chart.success === true) {
+            setFlash('success');
+            setTimeout(() => {
+                setFlash('');
+            }, 3000)
+        }
+    }, [chart])
 
     const chartChange = ({ target }) => {
         const { name, value } = target;
@@ -161,6 +171,11 @@ const Explore = () => {
         <Layout title='Explore'>
             <div ref={final} />
             <Container maxWidth='md' className={classes.container}>
+                { flash && flash === 'success' ?
+                    <h3>
+                        Graph pinned!
+                    </h3>
+                : null}
                 <Paper className={classes.paper}>
                 <Stepper activeStep={activeStep} className={classes.stepper}>
                     {steps.map(({ label }) => {
@@ -198,11 +213,12 @@ const Explore = () => {
                 <div ref={chartRef}>
                 {visual && activeStep > 0 && (
                     <Zoom in={true}>
-                    <Card
-                        header={title}
-                        content={<Chart data={fileData} type={visual} />}
-                        // content={<Chart {...{  fileData, type: visual }} />}
-                    />
+                        
+                        <Card
+                            header={title}
+                            content={<Chart data={fileData} type={visual} />}
+                            // content={<Chart {...{  fileData, type: visual }} />}
+                        />
                     </Zoom>
                 )}
                 </div>
