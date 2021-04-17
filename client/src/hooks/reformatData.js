@@ -1,4 +1,4 @@
-const reformatData = (in_labels, in_data, fname) => {
+const reformatData = (in_labels, in_data, first, last) => {
 
     const createDataset = (label, color, data) => {
         return {
@@ -22,7 +22,8 @@ const reformatData = (in_labels, in_data, fname) => {
     };
 
     let color;
-    if (fname === 'army') {
+    console.log(last);
+    if (last.slice(0, 4) === "2019") {
         color = 'green';
     } else {
         color = 'blue';
@@ -31,7 +32,8 @@ const reformatData = (in_labels, in_data, fname) => {
     return {
         labels: [...in_labels],
         datasets: [
-            createDataset(fname[0].toUpperCase().concat(fname.substring(1)), color, [...in_data]),
+            createDataset(first + "_" + last, color, [...in_data]),
+            // createDataset(first[0].toUpperCase().concat(first.substring(1)), color, [...in_data]),
         ]
     };
 };

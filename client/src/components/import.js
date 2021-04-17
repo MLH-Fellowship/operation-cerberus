@@ -168,7 +168,8 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
             }
         }
         // update file data state
-        setFileData((reformatData(firstCol, secondCol, file[0].file.name.split('_')[0])));
+        const first = file[0].file.name.split('_')[0], last = file[0].file.name.split('_')[1];
+        setFileData((reformatData(firstCol, secondCol, first, last)));
     };
 
     const selectFiles = (files) => {
