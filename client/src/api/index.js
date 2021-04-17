@@ -18,6 +18,7 @@ export const getUserInfo = (email, password) => {
             email: email,
             // password: password,
             token: res.data.auth_token,
+            isAdmin: res.data.isAdmin
           })
         );
       window.location.reload();

@@ -9,6 +9,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import ExploreIcon from '@material-ui/icons/Explore';
 import HomeIcon from '@material-ui/icons/Home';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import Menu from '@material-ui/core/Menu';
 import ListItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -23,14 +24,18 @@ import { NavLink, Link } from 'react-router-dom';
 const listItems = [
   { to: '/explore', title: 'Explore', icon: <ExploreIcon /> },
   { to: '/settings', title: 'Settings', icon: <SettingsIcon /> },
+  { to: '/admin-portal', title: 'Admin Portal', icon: <SupervisorAccountIcon />}
 ];
 
 const CustomAppBar = ({ title }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const setOpen = React.useContext(OpenDrawerContext);
 
-  const MenuItem = ({ to, title, icon }) => {
-    const [selected, setSelected] = React.useState(false);
+  const MenuItem = ({ to, title, icon, isAdmin }) => {
+      const [selected, setSelected] = React.useState(false);
+      if (to === "/admin-portal" && isAdmin === "false") {
+          return null;
+      }
     return (
       <NavLink to={to} isActive={(match) => setSelected(Boolean(match))} exact>
         <ListItem selected={selected}>
@@ -68,6 +73,11 @@ const CustomAppBar = ({ title }) => {
   }));
 
   const classes = useStyles();
+
+  const arr = localStorage.getItem('user').split("\"isAdmin\":");
+  const tmp = arr[arr.length - 1];
+  const isAdmin = tmp.slice(0, tmp.length - 1);
+//   console.log(isAdmin);
 
   return (
     <>
@@ -113,9 +123,9 @@ const CustomAppBar = ({ title }) => {
         open={Boolean(anchorEl)}
         onClose={closeProfileMenu}
       >
-        {listItems.map(({ ...fields }, key) => (
-          <MenuItem {...fields} key={key} />
-        ))}
+        {listItems.map(({ to, title, icon }, key) => {
+          return <MenuItem to={to} title={title} icon={icon} isAdmin={isAdmin} key={key} />
+        })}
         <ListItem onClick={logout}>
           <ListItemIcon>
             <LogoutIcon />
