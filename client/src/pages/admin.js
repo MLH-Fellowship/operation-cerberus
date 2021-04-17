@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import Layout from '../components/layout';
+import User from '../components/user';
 import { authenticateUser } from "../api";
 
 const Admin = () => {
-    const [loading, setLoading] = useState(true);
+    const [users, setUsers] = useState([])
     const [admin, setAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const getStatus = async (jwt) => {
         try {
@@ -29,24 +31,57 @@ const Admin = () => {
         }
     }
 
+    const getAllUsers = async (jwt) => {
+        try {
+            await axios
+                .get(`http://127.0.0.1:5000/auth/users`, {
+                    headers: {
+                        Authorization: `Bearer ${jwt}`
+                    }
+                })
+                .then((res) => {
+                    setUsers(res.data.users);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     // run once to authenticate Admin
     useEffect(() => {
         const info = JSON.parse(localStorage.getItem('user'));
         console.log(info);
         getStatus(info.token);
+        getAllUsers(info.token);
         // console.log(admin);
     }, []);
 
     useEffect(() => {
         console.log('rendered');
         console.log(admin);
-    }, [admin])
+        console.log(users);
+    }, [admin, users])
 
     if (!loading) {
         if (admin) {
             return (
                 <Layout>
                     <h1>Welcome Admin!</h1>
+                    <div className="cards">
+                        {users && loading === false
+                            ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on}/>)
+                            : null
+                        }
+                    </div>
+                    <div>
+                        <button
+                            className="btn btn--publish font-small" 
+                            style={{marginTop: "2rem"}} 
+                        >Create User</button>
+                    </div>
                 </Layout>
             )
         } else {

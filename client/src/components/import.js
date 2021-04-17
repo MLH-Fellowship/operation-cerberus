@@ -156,11 +156,15 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
             return( arrData );
         }
         const data = CSVToArray(txt, ",");
+        console.log(data);
         let firstCol = [], secondCol = [];
+        let amt;
         for (let i in data) {
             if (i > 0 && i < data.length - 1) {
                 firstCol.push(data[i][0]);
-                secondCol.push(parseFloat(data[i][1].substring(1).replace(",", "")));
+                amt = data[i][1].replace(",", "");
+                secondCol.push(parseFloat(amt));
+                // secondCol.push(parseFloat(data[i][1].substring(1).replace(",", "")));
             }
         }
         // update file data state
