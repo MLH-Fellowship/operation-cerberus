@@ -12,6 +12,7 @@ import Integrations from '../pages/integrations';
 import Explore from '../pages/explore';
 import Settings from '../pages/settings';
 import FourOhFour from '../pages/404';
+import Admin from "../pages/admin";
 
 import { connect } from 'react-redux';
 import {
@@ -49,6 +50,7 @@ const Router = (props) => {
                     path='/settings'
                     component={() => <Settings {...props} />}
                 />
+                <ProtectedRoute exact path='/admin-portal' component={Admin} />
                 <ProtectedRoute path='*' component={FourOhFour} />
             </Switch>
         </OpenDrawerProvider>

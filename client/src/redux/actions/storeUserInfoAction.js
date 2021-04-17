@@ -3,14 +3,14 @@ import {
   GET_USER_FAILED,
   GET_USER_SUCCESS,
 } from '../types/types';
-import { getUserInfo } from '../../api/index';
+import { authenticateUser } from '../../api/index';
 
 const storeUserInfoAction = (email, password) => (dispatch) => {
   dispatch({
     type: GET_USER_FETCHING,
   });
 
-  getUserInfo(email, password)
+  authenticateUser(email, password)
     .then((res) => {
       console.log(res, 'ACTION');
       dispatch({

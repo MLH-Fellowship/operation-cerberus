@@ -4,7 +4,7 @@ export default axios.create({
   baseURL: 'http://localhost:5000/auth',
 });
 
-export const getUserInfo = (email, password) => {
+export const authenticateUser = (email, password) => {
   return axios
     .post(`http://localhost:5000/auth/login`, {
       email: email,

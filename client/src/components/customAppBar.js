@@ -33,7 +33,7 @@ const CustomAppBar = ({ title }) => {
 
   const MenuItem = ({ to, title, icon, isAdmin }) => {
       const [selected, setSelected] = React.useState(false);
-      if (to === "/admin-portal" && isAdmin === "false") {
+      if (to === "/admin-portal" && isAdmin === false) {
           return null;
       }
     return (
@@ -74,10 +74,9 @@ const CustomAppBar = ({ title }) => {
 
   const classes = useStyles();
 
-  const arr = localStorage.getItem('user').split("\"isAdmin\":");
-  const tmp = arr[arr.length - 1];
-  const isAdmin = tmp.slice(0, tmp.length - 1);
-//   console.log(isAdmin);
+  const info = JSON.parse(localStorage.getItem('user'));
+  const isAdmin = info.isAdmin;
+//   const isAdmin = JSON.parse(localStorage.getItem('user').isAdmin);
 
   return (
     <>
