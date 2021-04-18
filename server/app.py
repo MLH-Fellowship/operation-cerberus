@@ -26,6 +26,7 @@ CORS(app, supports_credentials=True)
 app.config['FLASK_ADMIN_SWATCH'] = 'slate' # admin theme
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['UPLOAD_FOLDER'] = '/uploads'
 
 # set up db & bcrypt
 bcrypt = Bcrypt(app)
@@ -61,7 +62,8 @@ def upload():
     for fileName, fileObj in request.files.items():
         # make sure file has a name
         if fileObj and fileName:
-            fileObj.save(f"uploads/{fileName}")
+            fileObj.save(f"../uploads/{fileName}")
+            # fileObj.save(os.path.join(app.config['UPLOAD_FOLDER'], fileName))
             numUploaded += 1
 
     # if upload_count > 0, at least 1 file was uploaded
