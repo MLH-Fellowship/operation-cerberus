@@ -2,6 +2,9 @@ import {
   GET_USER_FAILED,
   GET_USER_FETCHING,
   GET_USER_SUCCESS,
+  USER_STORE_REQUEST,
+    USER_STORE_SUCCESS,
+    USER_STORE_FAILURE,
 } from '../types/types';
 
 const initialState = {
@@ -48,4 +51,25 @@ const storeUserInfoReducer = (state = initialState, action) => {
   }
 };
 
-export default storeUserInfoReducer;
+const storeUserReducer = (state = {email: null, isAdmin: null, token: null}, action) => {
+    switch(action.type) {
+        case USER_STORE_REQUEST:
+            return {
+                ...state
+            }
+        case USER_STORE_SUCCESS:
+            return {
+                ...state,
+                ...action.payload,
+            };
+        case USER_STORE_FAILURE:
+            return {
+                ...state,
+                ...action.payload
+            };
+        default:
+            return state;
+    }
+}
+
+export {storeUserInfoReducer, storeUserReducer};

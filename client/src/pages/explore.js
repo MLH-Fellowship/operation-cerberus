@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/layout';
+import Cookies from 'universal-cookie';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Zoom from '@material-ui/core/Zoom';
@@ -50,6 +51,9 @@ const Explore = () => {
                 setFlash('');
             }, 3000)
         }
+        const cookies = new Cookies();
+        console.log(cookies.get('myCat'));
+        console.log(cookies.get('specialKey'));
     }, [chart])
 
     const chartChange = ({ target }) => {

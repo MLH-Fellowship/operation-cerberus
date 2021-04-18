@@ -2,6 +2,9 @@ import {
   GET_USER_FETCHING,
   GET_USER_FAILED,
   GET_USER_SUCCESS,
+  USER_STORE_REQUEST,
+    USER_STORE_SUCCESS,
+    USER_STORE_FAILURE,
 } from '../types/types';
 import { authenticateUser } from '../../api/index';
 
@@ -25,5 +28,16 @@ const storeUserInfoAction = (email, password) => (dispatch) => {
       });
     });
 };
+
+const storeUserInfo = (email, isAdmin, token) => (dispatch) => {
+    dispatch({
+        type: USER_STORE_REQUEST,
+        payload: {
+            email,
+            isAdmin,
+            token
+        }
+    });
+}
 
 export { storeUserInfoAction };

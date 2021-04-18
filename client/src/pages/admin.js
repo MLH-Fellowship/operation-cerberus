@@ -16,7 +16,8 @@ const Admin = () => {
                 .get(`http://localhost:5000/auth/status`, {
                     headers: {
                         Authorization: `Bearer ${jwt}`
-                    }
+                    },
+                    withCredentials: true,
                 })
                 .then((res) => {
                     // console.log(res.data.data.admin);
@@ -34,10 +35,11 @@ const Admin = () => {
     const getAllUsers = async (jwt) => {
         try {
             await axios
-                .get(`http://127.0.0.1:5000/auth/users`, {
+                .get(`http://localhost:5000/auth/users`, {
                     headers: {
                         Authorization: `Bearer ${jwt}`
-                    }
+                    },
+                    withCredentials: true,
                 })
                 .then((res) => {
                     setUsers(res.data.users);
