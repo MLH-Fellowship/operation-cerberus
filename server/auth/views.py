@@ -6,6 +6,63 @@ from models import User, BlacklistToken
 
 auth_blueprint = Blueprint('auth', __name__)
 
+class DeleteUserAPI(MethodView):
+    """
+    delete user resource
+    """
+    def delete(self):
+        # verify user is admin via JWT
+        # print(request.headers)
+        auth_header = request.headers['Authorization']
+        # print(request.headers)
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            auth_token = ''
+        
+        if auth_token:
+            # verify admin
+            userID = User.decode_auth_token(auth_token)
+            admin = User.query.filter_by(id=userID).first()
+            if not admin.admin:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'You are not authorized to delete a user.'
+                }
+                return make_response(jsonify(responseObject)), 401
+
+            # get user to delete
+            post_data = request.get_json()
+            user = User.query.filter_by(id=post_data.get('id'))
+            if not user:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Error: user does not exist.'
+                }
+                return make_response(jsonify(responseObject)), 401
+            else:
+                user.delete()
+                db.session.commit()
+                responseObject = {
+                    'status': 'success',
+                    'message': 'User deleted.'
+                }
+                return make_response(jsonify(responseObject)), 201
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+
 class RefreshTokenAPI(MethodView):
     """
     refresh token resource
@@ -61,9 +118,11 @@ class RegisterAPI(MethodView):
         user = User.query.filter_by(email=post_data.get('email')).first()
         if not user:
             try:
+                # isAdmin = 't' if post_data.get("isAdmin") == True else 'f'
                 user = User(
                     email=post_data.get('email'),
-                    password=post_data.get('password')
+                    password=post_data.get('password'),
+                    admin=post_data.get("isAdmin")
                 )
                 # insert the user
                 db.session.add(user)
@@ -86,10 +145,10 @@ class RegisterAPI(MethodView):
                 return make_response(jsonify(responseObject)), 401
         else:
             responseObject = {
-                'status': 'fail',
+                'status': 'failure',
                 'message': 'User already exists. Please Log in.',
             }
-            return make_response(jsonify(responseObject)), 202
+            return make_response(jsonify(responseObject)), 401
 
 
 class LoginAPI(MethodView):
@@ -289,12 +348,13 @@ class LogoutAPI(MethodView):
             return make_response(jsonify(responseObject)), 403
 
 # define the API resources
-registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')
 users_view = UsersAPI.as_view('users_api')
 logout_view = LogoutAPI.as_view('logout_api')
+registration_view = RegisterAPI.as_view('register_api')
 refreshToken_view = RefreshTokenAPI.as_view('refreshtoken_api')
+deleteUser_view = DeleteUserAPI.as_view('deleteuser_api')
 
 # add Rules for API Endpoints
 auth_blueprint.add_url_rule(
@@ -326,4 +386,9 @@ auth_blueprint.add_url_rule(
     '/auth/refresh_token',
     view_func=refreshToken_view,
     methods=['POST']
+)
+auth_blueprint.add_url_rule(
+    '/auth/delete',
+    view_func=deleteUser_view,
+    methods=['DELETE']
 )
