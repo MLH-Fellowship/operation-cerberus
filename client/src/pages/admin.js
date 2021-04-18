@@ -5,7 +5,7 @@ import axios from 'axios';
 import Layout from '../components/layout';
 import User from '../components/user';
 import CreateUser from "../components/createUser";
-import { createUserCreator } from "../redux/actions/storeUserInfoAction";
+import { createUserCreator, deleteUser } from "../redux/actions/storeUserInfoAction";
 import { authenticateUser } from "../api";
 
 const Admin = () => {
@@ -88,9 +88,9 @@ const Admin = () => {
     }, [newUser])
 
     useEffect(() => {
-        console.log('rendered');
-        console.log(admin);
-        console.log(users);
+        // console.log('rendered');
+        // console.log(admin);
+        // console.log(users);
     }, [admin, users])
 
     const handleCreateUser = (e) => {
@@ -100,6 +100,11 @@ const Admin = () => {
 
     const handleCancel = (e) => {
         setShowCreate(false);
+    }
+
+    const handleDelete = (id) => {
+        const token = JSON.parse(localStorage.getItem('user')).token;
+        dispatch(deleteUser(token, id));
     }
 
     const handleSubmitUser = (email, password, isAdmin) => {
@@ -116,7 +121,7 @@ const Admin = () => {
                     {createStatus === "success" ? <h3>User created!</h3> : null}
                     <div className="cards">
                         {users && loading === false
-                            ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on}/>)
+                            ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on} handleDelete={handleDelete}/>)
                             : null
                         }
                         {showCreate && 
