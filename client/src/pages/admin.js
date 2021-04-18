@@ -11,12 +11,14 @@ import { authenticateUser } from "../api";
 const Admin = () => {
     const dispatch = useDispatch();
     const newUser = useSelector(state => state.createdUser);
+    const deletedUser = useSelector(state => state.deletedUser);
 
     const [users, setUsers] = useState([])
     const [admin, setAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
     const [createStatus, setCreateStatus] = useState(false);
+    const [deleteStatus, setDeleteStatus] = useState(false);
 
     const getStatus = async (jwt) => {
         try {
@@ -73,7 +75,7 @@ const Admin = () => {
         const info = JSON.parse(localStorage.getItem('user'));
         getAllUsers(info.token);
 
-        // set flash message
+        // set flash message - create
         if (newUser.message === "success") {
             setCreateStatus(newUser.message);
             setTimeout(() => {
@@ -86,6 +88,25 @@ const Admin = () => {
             }, 3000)
         }
     }, [newUser])
+
+    useEffect(() => {
+        // const info
+        const info = JSON.parse(localStorage.getItem('user'));
+        getAllUsers(info.token);
+        
+        // set flash message - delete
+        if (deletedUser.message === "success") {
+            setDeleteStatus(deletedUser.message);
+            setTimeout(() => {
+                setDeleteStatus('');
+            }, 3000)
+        } else {
+            setDeleteStatus(deletedUser.message);
+            setTimeout(() => {
+                setDeleteStatus('');
+            }, 3000)
+        }
+    }, [deletedUser])
 
     useEffect(() => {
         // console.log('rendered');
@@ -108,7 +129,7 @@ const Admin = () => {
     }
 
     const handleSubmitUser = (email, password, isAdmin) => {
-        console.log(createUserCreator);
+        // console.log(createUserCreator);
         setShowCreate(false);
         dispatch(createUserCreator(email, password, isAdmin));
     }
@@ -119,6 +140,7 @@ const Admin = () => {
                 <Layout>
                     <h1>Welcome Admin!</h1>
                     {createStatus === "success" ? <h3>User created!</h3> : null}
+                    {deleteStatus === "success" ? <h3>User deleted.</h3> : null}
                     <div className="cards">
                         {users && loading === false
                             ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on} handleDelete={handleDelete}/>)
