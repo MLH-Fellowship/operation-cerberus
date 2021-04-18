@@ -74,10 +74,12 @@ const deleteUser = (token, userID) => async (dispatch) => {
         
         const headers = {
             "Authorization": `Bearer ${token}`,
-            // "Content-Type": "application/json",
         }
 
-        const { data } = await axios.delete(`http://localhost:5000/auth/delete/${userID}`, {}, {headers: headers});
+        // const { data } = await axios.get(`http://localhost:5000/auth/delete/${userID}`, {headers});
+        // const { data } = await axios.get(`http://localhost:5000/auth/delete/${userID}`, {headers: {Authorization: `Bearer ${token}`}});
+        const { data } = await axios.delete(`http://localhost:5000/auth/delete/${userID}`, {headers});
+        // const { data } = await axios.delete(`http://localhost:5000/auth/delete/${userID}`, {headers: {Authorization: `Bearer ${token}`}, crossdomain: true,});
         // const { data } = await axios.delete(`http://localhost:5000/auth/delete${userID}`, {userID}, {headers: headers});
         
         dispatch({

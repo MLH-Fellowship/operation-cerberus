@@ -10,9 +10,17 @@ class DeleteUserAPI(MethodView):
     """
     delete user resource
     """
-    def delete(self):
+    def get(self, id):
+        print(request)
+        print(request.args)
+        print(request.get_json())
+        return make_response(jsonify({'status': 'success'})), 200
+    
+    def delete(self, id):
         # verify user is admin via JWT
         # print(request.headers)
+        # print(request.args)
+        # return make_response(jsonify({"def": "def"})), 201
         auth_header = request.headers['Authorization']
         # print(request.headers)
         if auth_header:
@@ -23,7 +31,8 @@ class DeleteUserAPI(MethodView):
                     'status': 'fail',
                     'message': 'Bearer token malformed.'
                 }
-                return make_response(jsonify(responseObject)), 401
+                res = make_response(jsonify(responseObject))
+                return res, 401
         else:
             auth_token = ''
         
@@ -39,8 +48,7 @@ class DeleteUserAPI(MethodView):
                 return make_response(jsonify(responseObject)), 401
 
             # get user to delete
-            post_data = request.get_json()
-            user = User.query.filter_by(id=post_data.get('id'))
+            user = User.query.filter_by(id=id)
             if not user:
                 responseObject = {
                     'status': 'fail',
@@ -54,7 +62,7 @@ class DeleteUserAPI(MethodView):
                     'status': 'success',
                     'message': 'User deleted.'
                 }
-                return make_response(jsonify(responseObject)), 201
+                return make_response(jsonify(responseObject)), 204
         else:
             responseObject = {
                 'status': 'fail',
@@ -388,7 +396,7 @@ auth_blueprint.add_url_rule(
     methods=['POST']
 )
 auth_blueprint.add_url_rule(
-    '/auth/delete',
+    '/auth/delete/<id>',
     view_func=deleteUser_view,
-    methods=['DELETE']
+    methods=['DELETE', 'GET']
 )
