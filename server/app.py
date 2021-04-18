@@ -17,9 +17,9 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'json'}
 
 # initialize app and app settings
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'slate' # admin teheme
+app.config['FLASK_ADMIN_SWATCH'] = 'slate' # admin theme
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config.from_object(os.environ['APP_SETTINGS'])
 
@@ -79,6 +79,9 @@ def upload():
 # def get_database
 from auth.views import auth_blueprint
 app.register_blueprint(auth_blueprint)
+
+# from auth.users import user_blueprint
+# app.register_blueprint(user_blueprint)
 
 if __name__ == "__main__":
     app.run()

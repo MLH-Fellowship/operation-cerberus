@@ -71,9 +71,15 @@ class LoginAPI(MethodView):
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token
+                        'auth_token': auth_token,
+                        'isAdmin': user.admin
                     }
-                    return make_response(jsonify(responseObject)), 200
+                    res = make_response(jsonify(responseObject))
+                    res.set_cookie('auth_token', auth_token, httponly=True)
+                    res.set_cookie('public', 'somval')
+                    print(res.headers)
+                    return res, 200
+                    # return make_response(jsonify(responseObject)), 200
             else:
                 responseObject = {
                     'status': 'fail',
@@ -96,6 +102,7 @@ class UserAPI(MethodView):
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
+        # print(request.headers)
         if auth_header:
             try:
                 auth_token = auth_header.split(" ")[1]
@@ -133,6 +140,49 @@ class UserAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
 
+class UsersAPI(MethodView):
+    """
+    Users Resource
+    """
+    def get(self):
+        print(request.headers)
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObj = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                users = User.query.all()
+                responseObject = {
+                    'status': 'success',
+                    'users': [{
+                        'user_id': user.id,
+                        'email': user.email,
+                        'admin': user.admin,
+                        'registered_on': user.registered_on
+                    } for user in users]
+                }
+                return make_response(jsonify(responseObject)), 200
+            responseObject = {
+                'status': 'fail',
+                'message': resp
+            }
+            return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
 
 class LogoutAPI(MethodView):
     """
@@ -141,6 +191,7 @@ class LogoutAPI(MethodView):
     def post(self):
         # get auth token
         auth_header = request.headers.get('Authorization')
+        # print(request.headers)
         if auth_header:
             auth_token = auth_header.split(" ")[1]
         else:
@@ -183,6 +234,7 @@ class LogoutAPI(MethodView):
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')
+users_view = UsersAPI.as_view('users_api')
 logout_view = LogoutAPI.as_view('logout_api')
 
 # add Rules for API Endpoints
@@ -206,4 +258,8 @@ auth_blueprint.add_url_rule(
     view_func=logout_view,
     methods=['POST']
 )
-
+auth_blueprint.add_url_rule(
+    '/auth/users',
+    view_func=users_view,
+    methods=['GET']
+)
