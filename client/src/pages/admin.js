@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import Layout from '../components/layout';
 import User from '../components/user';
 import CreateUser from "../components/createUser";
+import { createUserCreator } from "../redux/actions/storeUserInfoAction";
 import { authenticateUser } from "../api";
 
 const Admin = () => {
+    const dispatch = useDispatch();
+    const newUser = useSelector(state => state.createdUser);
+
     const [users, setUsers] = useState([])
     const [admin, setAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
+    const [createStatus, setCreateStatus] = useState(false);
 
     const getStatus = async (jwt) => {
         try {
@@ -57,11 +63,29 @@ const Admin = () => {
     // run once to authenticate Admin
     useEffect(() => {
         const info = JSON.parse(localStorage.getItem('user'));
-        console.log(info);
         getStatus(info.token);
         getAllUsers(info.token);
         // console.log(admin);
     }, []);
+
+    useEffect(() => {
+        // const info
+        const info = JSON.parse(localStorage.getItem('user'));
+        getAllUsers(info.token);
+
+        // set flash message
+        if (newUser.message === "success") {
+            setCreateStatus(newUser.message);
+            setTimeout(() => {
+                setCreateStatus('');
+            }, 3000)
+        } else {
+            setCreateStatus(newUser.message);
+            setTimeout(() => {
+                setCreateStatus('');
+            }, 3000)
+        }
+    }, [newUser])
 
     useEffect(() => {
         console.log('rendered');
@@ -75,17 +99,13 @@ const Admin = () => {
     }
 
     const handleCancel = (e) => {
-        // e.preventDefault();
         setShowCreate(false);
     }
 
     const handleSubmitUser = (email, password, isAdmin) => {
-        // e.preventDefault();
-        console.log(email);
-        console.log(password);
-        console.log(isAdmin);
-        // setCreateUser(false);
-        // dispatch(USER_CREATE_REQUEST);
+        console.log(createUserCreator);
+        setShowCreate(false);
+        dispatch(createUserCreator(email, password, isAdmin));
     }
 
     if (!loading) {
@@ -93,6 +113,7 @@ const Admin = () => {
             return (
                 <Layout>
                     <h1>Welcome Admin!</h1>
+                    {createStatus === "success" ? <h3>User created!</h3> : null}
                     <div className="cards">
                         {users && loading === false
                             ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on}/>)

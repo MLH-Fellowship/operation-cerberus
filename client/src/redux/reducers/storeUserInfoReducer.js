@@ -5,6 +5,9 @@ import {
   USER_STORE_REQUEST,
     USER_STORE_SUCCESS,
     USER_STORE_FAILURE,
+    USER_CREATE_REQUEST,
+    USER_CREATE_SUCCESS,
+    USER_CREATE_FAILURE,
 } from '../types/types';
 
 const initialState = {
@@ -72,4 +75,17 @@ const storeUserReducer = (state = {email: null, isAdmin: null, token: null}, act
     }
 }
 
-export {storeUserInfoReducer, storeUserReducer};
+const createUserReducer = (state = {}, action) => {
+    switch(action.type) {
+        case USER_CREATE_REQUEST:
+            return {loading: true};
+        case USER_CREATE_SUCCESS:
+            return {loading: false, message: "success", error: false};
+        case USER_CREATE_FAILURE:
+            return {loading: true, message: "fail", error: true}
+        default:
+            return state;
+    }
+}
+
+export {storeUserInfoReducer, storeUserReducer, createUserReducer};
