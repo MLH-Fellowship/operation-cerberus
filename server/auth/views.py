@@ -6,15 +6,56 @@ from models import User, BlacklistToken
 
 auth_blueprint = Blueprint('auth', __name__)
 
+class RefreshTokenAPI(MethodView):
+    """
+    refresh token resource
+    """
+    def post(self):
+        # verify refreshToken
+        refreshToken = ''
+        # print(request.cookies)
+        try:
+            refreshToken = request.cookies['refreshToken']
+        except KeyError:
+            responseObject = {
+                'status': 'fail',
+                'message': 'refreshToken not found. Please re-authenticate (login).'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+        try:
+            # provide an accessToken
+            userID = User.decode_auth_token(refreshToken)
+            auth_token = User.encode_access_token(None, userID)
+            # print(refreshToken)
+            if auth_token and refreshToken:
+                responseObject = {
+                    'status': 'success',
+                    'message': 'refreshToken found. auth_token granted',
+                    'auth_token': auth_token
+                }
+                return make_response(jsonify(responseObject)), 201
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'refreshToken or auth_token not found',
+                }
+                return make_response(jsonify(responseObject)), 401
+        except Exception as e:
+            print(e)
+            responseObject = {
+                'status': 'fail',
+                'message': 'Some error occurred. Please try again.'
+            }
+            return make_response(jsonify(responseObject)), 401
 
 class RegisterAPI(MethodView):
     """
     User Registration Resource
     """
-
     def post(self):
         # get the post data
-        print(request)
+        # print(request)
         post_data = request.get_json()
         # check if user already exists
         user = User.query.filter_by(email=post_data.get('email')).first()
@@ -28,7 +69,7 @@ class RegisterAPI(MethodView):
                 db.session.add(user)
                 db.session.commit()
                 # generate the auth token
-                auth_token = user.encode_auth_token(user.id)
+                auth_token = user.encode_access_token(user.id)
                 print(auth_token)
                 responseObject = {
                     'status': 'success',
@@ -58,16 +99,23 @@ class LoginAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
+
         try:
             # fetch the user data
             user = User.query.filter_by(
                 email=post_data.get('email')
             ).first()
+            
+            # authenticate user
             if user and bcrypt.check_password_hash(
                 user.password, post_data.get('password')
             ):
-                auth_token = user.encode_auth_token(user.id)
-                if auth_token:
+                # build refreshToken
+                refreshToken = user.encode_refresh_token(user.id)
+                # build accessToken
+                auth_token = user.encode_access_token(user.id)
+
+                if auth_token and refreshToken:
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
@@ -75,9 +123,8 @@ class LoginAPI(MethodView):
                         'isAdmin': user.admin
                     }
                     res = make_response(jsonify(responseObject))
-                    res.set_cookie('auth_token', auth_token, httponly=True)
-                    res.set_cookie('public', 'somval')
-                    print(res.headers)
+                    res.set_cookie('refreshToken', refreshToken, httponly=True)
+                    # print(res.headers)
                     return res, 200
                     # return make_response(jsonify(responseObject)), 200
             else:
@@ -145,7 +192,18 @@ class UsersAPI(MethodView):
     Users Resource
     """
     def get(self):
-        print(request.headers)
+        # verify refreshToken
+        try:
+            refreshToken = request.cookies['refreshToken']
+        except KeyError:
+            responseObject = {
+                'status': 'fail',
+                'message': 'refreshToken not found. Please re-authenticate (login).'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+        # provide an accessToken
+
         auth_header = request.headers.get('Authorization')
         if auth_header:
             try:
@@ -236,6 +294,7 @@ login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')
 users_view = UsersAPI.as_view('users_api')
 logout_view = LogoutAPI.as_view('logout_api')
+refreshToken_view = RefreshTokenAPI.as_view('refreshtoken_api')
 
 # add Rules for API Endpoints
 auth_blueprint.add_url_rule(
@@ -262,4 +321,9 @@ auth_blueprint.add_url_rule(
     '/auth/users',
     view_func=users_view,
     methods=['GET']
+)
+auth_blueprint.add_url_rule(
+    '/auth/refresh_token',
+    view_func=refreshToken_view,
+    methods=['POST']
 )

@@ -24,16 +24,35 @@ class User(db.Model):
     
     def __repr__(self):
         return f'<id {self.id}>'
-
-
-    def encode_auth_token(self, user_id):
+    
+    def encode_refresh_token(self, user_id):
         """
-        Generates the Auth Token
+        Generates refresh token; has a lifetime of a week 
         :return: string
         """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=3600),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7, seconds=900),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+
+    def encode_access_token(self, user_id):
+        """
+        Generates the access Token; has a lifetime of 15 minutes
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=900),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }
