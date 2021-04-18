@@ -3,12 +3,14 @@ import { Redirect } from "react-router-dom";
 import axios from 'axios';
 import Layout from '../components/layout';
 import User from '../components/user';
+import CreateUser from "../components/createUser";
 import { authenticateUser } from "../api";
 
 const Admin = () => {
     const [users, setUsers] = useState([])
     const [admin, setAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [showCreate, setShowCreate] = useState(false);
 
     const getStatus = async (jwt) => {
         try {
@@ -67,6 +69,25 @@ const Admin = () => {
         console.log(users);
     }, [admin, users])
 
+    const handleCreateUser = (e) => {
+        e.preventDefault();
+        setShowCreate(true);
+    }
+
+    const handleCancel = (e) => {
+        // e.preventDefault();
+        setShowCreate(false);
+    }
+
+    const handleSubmitUser = (email, password, isAdmin) => {
+        // e.preventDefault();
+        console.log(email);
+        console.log(password);
+        console.log(isAdmin);
+        // setCreateUser(false);
+        // dispatch(USER_CREATE_REQUEST);
+    }
+
     if (!loading) {
         if (admin) {
             return (
@@ -77,12 +98,21 @@ const Admin = () => {
                             ? users.map((user) => <User {...user} admin={user.admin} userID={user.user_id} registeredOn={user.registered_on}/>)
                             : null
                         }
+                        {showCreate && 
+                            <CreateUser
+                                handleSubmitUser={handleSubmitUser} 
+                                handleCancel={handleCancel}
+                            />
+                        }
                     </div>
                     <div>
                         <button
                             className="btn btn--publish font-small" 
                             style={{marginTop: "2rem"}} 
-                        >Create User</button>
+                            onClick={handleCreateUser}
+                        >
+                            Create User
+                        </button>
                     </div>
                 </Layout>
             )
