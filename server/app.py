@@ -49,7 +49,7 @@ def users():
     entries = users
     return Flask.jsonify(entries)
 
-@app.route('/upload', methods=['POST'])
+# @app.route('/upload', methods=['POST'])
 def upload():
     # make sure they're not uploading 0 files
     if len(request.files) == 0:
@@ -86,6 +86,9 @@ def upload():
 from auth.views import auth_blueprint
 app.register_blueprint(auth_blueprint)
 
+from files.views import file_blueprint
+app.register_blueprint(file_blueprint)
+
 # from auth.users import user_blueprint
 # app.register_blueprint(user_blueprint)
 
@@ -96,12 +99,12 @@ def after_request(response):
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    print(response.status_code)
-    print(response.status)
+    # print(response.status_code)
+    # print(response.status)
     # for item in dir(response):
     #     print(item)
     #     print(item)
-    print(response.headers)
+    # print(response.headers)
     return response
 
 
