@@ -46,7 +46,7 @@ class RequestAPI(MethodView):
             responseObject = {
                 'status': 'success',
                 'message': 'Files fetched.',
-                'files': [f.filename for f in files]
+                'files': [{'filename': f.filename, 'uploaded_on': f.uploaded_on} for f in files]
             }
             return make_response(jsonify(responseObject)), 200
             
