@@ -21,7 +21,7 @@ export const getUserInfo = (email, password) => {
             token: res.data.auth_token,
           })
         );
-      window.location.reload();
+      // window.location.reload();
       return res;
     })
     .catch((err) => {

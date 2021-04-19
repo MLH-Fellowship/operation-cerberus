@@ -30,7 +30,7 @@ const Router = (props) => {
       />
 
       <OpenDrawerProvider value={() => dispatch(OpenDrawerAction())}>
-        <Switch>
+        <Switch>``
           <Route exact path='/auth' component={Auth} />
           <ProtectedRoute exact path='/' component={Home} />
           <ProtectedRoute exact path='/travel' component={Travel} />

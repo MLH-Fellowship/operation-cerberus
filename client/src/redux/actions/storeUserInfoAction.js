@@ -12,7 +12,7 @@ const storeUserInfoAction = (email, password) => (dispatch) => {
 
   getUserInfo(email, password)
     .then((res) => {
-      console.log(res, 'ACTION');
+      // console.log(res, 'ACTION');
       dispatch({
         type: GET_USER_SUCCESS,
         payload: res.data,
