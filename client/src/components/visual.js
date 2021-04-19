@@ -41,10 +41,10 @@ const Visual = ({ chartChange, xval, yval, visual, allowNext, fileID }) => {
   }, [xval, yval, visual, allowNext]);
 
   useEffect(() => {
-    console.log(fileID);
-    fetch(`http://localhost:5000/database?id=${fileID}`).then((res) =>
-      res.json().then((json) => console.log(json))
-    );
+    // console.log(fileID);
+    // fetch(`http://localhost:5000/database?id=${fileID}`).then((res) =>
+    //   res.json().then((json) => console.log(json))
+    // );
   }, [fileID]);
 
   const useStyles = makeStyles((theme) => ({

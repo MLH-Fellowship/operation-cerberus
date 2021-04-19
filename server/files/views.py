@@ -7,8 +7,8 @@ from models import User, Files
 
 file_blueprint = Blueprint('file', __name__)
 
-class RequestAPI(MethodView):
-    def get(self, id):
+class RequestSingleAPI(MethodView):
+    def get(self, fileID):
         auth_header = request.headers['Authorization']
         if auth_header:
             try:
@@ -26,7 +26,78 @@ class RequestAPI(MethodView):
         if auth_token:
             # verify user
             userID = User.decode_auth_token(auth_token)
-            user = User.query.filter_by(id=id).first()
+            user = User.query.filter_by(id=userID).first()
+            if not user:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Error: user does not exist.'
+                }
+                return make_response(jsonify(responseObject)), 401
+            
+            if user.id != userID:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Error: requested user\'s files do not match auth_token.'
+                }
+                return make_response(jsonify(responseObject)), 404
+            
+            # verify file exists and user is owner of file
+            file = Files.query.filter_by(id=fileID).first()
+            # print(file)
+            # print(fileID)
+            if not file:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'File not found.',
+                }
+                return make_response(jsonify(responseObject)), 404
+
+            if file.user_id != user.id:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'File user id does not match provided useer id.',
+                }
+                return make_response(jsonify(responseObject)), 404
+
+            # return file contents
+            asTxt = ''
+            with open(f"uploads/{file.filename}") as f:
+                asTxt = f.read()
+
+            responseObject = {
+                'status': 'success',
+                'message': 'File fetched and read.',
+                'fileContents': asTxt
+            }
+            return make_response(jsonify(responseObject)), 200
+            
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+class RequestAPI(MethodView):
+    def get(self):
+        auth_header = request.headers['Authorization']
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                res = make_response(jsonify(responseObject))
+                return res, 401
+        else:
+            auth_token = ''
+        
+        if auth_token:
+            # verify user
+            userID = User.decode_auth_token(auth_token)
+            user = User.query.filter_by(id=userID).first()
             if not user:
                 responseObject = {
                     'status': 'fail',
@@ -159,6 +230,7 @@ class UploadAPI(MethodView):
 # define API resources
 upload_view = UploadAPI.as_view('upload_api')
 request_view = RequestAPI.as_view('request_api')
+request_single_view = RequestSingleAPI.as_view('request_single_api')
 
 # add rules for API endpoints
 file_blueprint.add_url_rule(
@@ -167,7 +239,12 @@ file_blueprint.add_url_rule(
     methods=['POST']
 )
 file_blueprint.add_url_rule(
-    '/files/<id>',
+    '/files',
     view_func=request_view,
+    methods=['GET']
+)
+file_blueprint.add_url_rule(
+    '/files/<fileID>',
+    view_func=request_single_view,
     methods=['GET']
 )

@@ -8,11 +8,13 @@ class Files(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     filename = db.Column(db.String(50))
+    uploaded_on = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, filename, user_id):
         self.filename = filename
         self.user_id = user_id
+        self.uploaded_on = datetime.datetime.now()
     
     def __repr__(self):
         return f'<id {self.id}>'

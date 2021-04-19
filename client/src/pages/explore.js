@@ -91,6 +91,10 @@ const Explore = () => {
         });
     };
 
+    const saveChart = () => {
+        
+    }
+
     const pinOverview = () => {
         // store fileData in redux store
         dispatch(pinChart(fileData, title));
@@ -232,7 +236,7 @@ const Explore = () => {
                     justify='center'
                     container
                     className={classes.spacing}
-                    spacing={3}
+                    spacing={4}
                 >
                     <Grid item>
                     <Button
@@ -242,6 +246,16 @@ const Explore = () => {
                     >
                         Download
                     </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            color='secondary'
+                            variant='contained'
+                            onClick={downloadChart}
+                            // style={{marginLeft: "1rem", marginRight: "1rem"}}
+                            >
+                            Save
+                        </Button>
                     </Grid>
                     <Grid item>
                     <Button 

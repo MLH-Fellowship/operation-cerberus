@@ -37,10 +37,13 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
             return formData.append(file.name, file, file.name);
         });
 
+        const info = JSON.parse(localStorage.getItem('user'))
+
         // upload file
-        fetch('http://localhost:5000/upload', {
+        fetch('http://localhost:5000/files/upload', {
             method: 'POST',
             headers: {
+                Authorization: `Bearer ${info.token}`,
                 Accept: 'multipart/form-data'
             },
             body: formData
@@ -51,14 +54,14 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
                 if (status === 'success') {
                     setResult({
                         severity: 'success',
-                        message: `${uploads} file(s) successfully imported.`
+                        message: `File successfully uploaded.`
                     });
                     setFileID(id);
                     allowNext(true);
                 } else {
                     setResult({
                         severity: 'warning',
-                        message: 'File import failed, please try again.'
+                        message: 'File upload failed, please try again.'
                     });
                 }
             });
