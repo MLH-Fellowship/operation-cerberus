@@ -114,6 +114,8 @@ class RefreshTokenAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
 
+import datetime
+
 class RegisterAPI(MethodView):
     """
     User Registration Resource
@@ -130,7 +132,8 @@ class RegisterAPI(MethodView):
                 user = User(
                     email=post_data.get('email'),
                     password=post_data.get('password'),
-                    admin=post_data.get("isAdmin")
+                    admin=post_data.get("isAdmin"),
+                    # registered_on=datetime.date.today() - datetime.timedelta(71)
                 )
                 # insert the user
                 db.session.add(user)

@@ -30,7 +30,7 @@ const rows = [
 
 ];
 
-export default function Uploads({files}) {
+export default function Uploads({files, sliceDate}) {
     const uploads = files.map((f) => createData(f.id, f.uploaded_on, f.filename))
 
   return (
@@ -47,7 +47,7 @@ export default function Uploads({files}) {
       <TableBody>
         {uploads.map((row) => (
           <TableRow key={row.id}>
-            <TableCell>{row.date}</TableCell>
+            <TableCell>{sliceDate(row.date)}</TableCell>
             <TableCell>{row.name}</TableCell>
             {/* <TableCell>{row.shipTo}</TableCell>
             <TableCell>$ {row.amount}</TableCell>

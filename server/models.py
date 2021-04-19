@@ -31,11 +31,13 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
 
+    # take off registered_on
     def __init__(self, email, password, admin=False):
         self.email = email
         self.password = bcrypt.generate_password_hash(
             password, app.config.get('BCRYPT_LOG_ROUNDS')
         ).decode()
+        # self.registered_on = registered_on
         self.registered_on = datetime.datetime.now()
         self.admin = admin
     
