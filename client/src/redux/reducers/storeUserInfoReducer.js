@@ -1,7 +1,16 @@
 import {
-  GET_USER_FAILED,
-  GET_USER_FETCHING,
-  GET_USER_SUCCESS,
+    GET_USER_FAILED,
+    GET_USER_FETCHING,
+    GET_USER_SUCCESS,
+    USER_STORE_REQUEST,
+    USER_STORE_SUCCESS,
+    USER_STORE_FAILURE,
+    USER_CREATE_REQUEST,
+    USER_CREATE_SUCCESS,
+    USER_CREATE_FAILURE,
+    USER_DELETE_REQUEST,
+    USER_DELETE_SUCCESS,
+    USER_DELETE_FAILURE,
 } from '../types/types';
 
 const initialState = {
@@ -48,4 +57,51 @@ const storeUserInfoReducer = (state = initialState, action) => {
   }
 };
 
-export default storeUserInfoReducer;
+const storeUserReducer = (state = {email: null, isAdmin: null, token: null}, action) => {
+    switch(action.type) {
+        case USER_STORE_REQUEST:
+            return {
+                ...state
+            }
+        case USER_STORE_SUCCESS:
+            return {
+                ...state,
+                ...action.payload,
+            };
+        case USER_STORE_FAILURE:
+            return {
+                ...state,
+                ...action.payload
+            };
+        default:
+            return state;
+    }
+}
+
+const createUserReducer = (state = {}, action) => {
+    switch(action.type) {
+        case USER_CREATE_REQUEST:
+            return {loading: true};
+        case USER_CREATE_SUCCESS:
+            return {loading: false, message: "success", error: false};
+        case USER_CREATE_FAILURE:
+            return {loading: true, message: "fail", error: true}
+        default:
+            return state;
+        }
+    }
+    
+    const deleteUserReducer = (state = {}, action) => {
+        switch(action.type) {
+            case USER_DELETE_REQUEST:
+                return {loading: true};
+            case USER_DELETE_SUCCESS:
+                return {loading: false, message: "success", error: false};
+            case USER_DELETE_FAILURE:
+                return {loading: true, message: "fail", error: true}
+            default:
+                return state;
+    }
+}
+
+export {storeUserInfoReducer, storeUserReducer, createUserReducer, deleteUserReducer};

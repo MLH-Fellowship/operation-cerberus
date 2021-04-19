@@ -8,15 +8,15 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Deposits() {
+export default function Deposits({name, date}) {
   const classes = useStyles();
   return (
     <>
-      <Typography component='p' variant='h4'>
-        $3,024.00
+      <Typography component='p' variant='h5'>
+        {name}
       </Typography>
       <Typography color='textSecondary' className={classes.depositContext}>
-        on 15 March, 2019
+        {date}
       </Typography>
     </>
   );

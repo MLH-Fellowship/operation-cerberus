@@ -6,29 +6,140 @@ from models import User, BlacklistToken
 
 auth_blueprint = Blueprint('auth', __name__)
 
+class DeleteUserAPI(MethodView):
+    """
+    delete user resource
+    """
+    def get(self, id):
+        print(request)
+        print(request.args)
+        print(request.get_json())
+        return make_response(jsonify({'status': 'success'})), 200
+    
+    def delete(self, id):
+        # verify user is admin via JWT
+        # print(request.headers)
+        # print(request.args)
+        # return make_response(jsonify({"def": "def"})), 201
+        auth_header = request.headers['Authorization']
+        # print(request.headers)
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                res = make_response(jsonify(responseObject))
+                return res, 401
+        else:
+            auth_token = ''
+        
+        if auth_token:
+            # verify admin
+            userID = User.decode_auth_token(auth_token)
+            admin = User.query.filter_by(id=userID).first()
+            if not admin.admin:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'You are not authorized to delete a user.'
+                }
+                return make_response(jsonify(responseObject)), 401
+
+            # get user to delete
+            user = User.query.filter_by(id=id)
+            if not user:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Error: user does not exist.'
+                }
+                return make_response(jsonify(responseObject)), 401
+            else:
+                user.delete()
+                db.session.commit()
+                responseObject = {
+                    'status': 'success',
+                    'message': 'User deleted.'
+                }
+                return make_response(jsonify(responseObject)), 204
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+
+class RefreshTokenAPI(MethodView):
+    """
+    refresh token resource
+    """
+    def post(self):
+        # verify refreshToken
+        refreshToken = ''
+        # print(request.cookies)
+        try:
+            refreshToken = request.cookies['refreshToken']
+        except KeyError:
+            responseObject = {
+                'status': 'fail',
+                'message': 'refreshToken not found. Please re-authenticate (login).'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+        try:
+            # provide an accessToken
+            userID = User.decode_auth_token(refreshToken)
+            auth_token = User.encode_access_token(None, userID)
+            # print(refreshToken)
+            if auth_token and refreshToken:
+                responseObject = {
+                    'status': 'success',
+                    'message': 'refreshToken found. auth_token granted',
+                    'auth_token': auth_token
+                }
+                return make_response(jsonify(responseObject)), 201
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'refreshToken or auth_token not found',
+                }
+                return make_response(jsonify(responseObject)), 401
+        except Exception as e:
+            print(e)
+            responseObject = {
+                'status': 'fail',
+                'message': 'Some error occurred. Please try again.'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+import datetime
 
 class RegisterAPI(MethodView):
     """
     User Registration Resource
     """
-
     def post(self):
         # get the post data
-        print(request)
+        # print(request)
         post_data = request.get_json()
         # check if user already exists
         user = User.query.filter_by(email=post_data.get('email')).first()
         if not user:
             try:
+                # isAdmin = 't' if post_data.get("isAdmin") == True else 'f'
                 user = User(
                     email=post_data.get('email'),
-                    password=post_data.get('password')
+                    password=post_data.get('password'),
+                    admin=post_data.get("isAdmin"),
+                    # registered_on=datetime.date.today() - datetime.timedelta(71)
                 )
                 # insert the user
                 db.session.add(user)
                 db.session.commit()
                 # generate the auth token
-                auth_token = user.encode_auth_token(user.id)
+                auth_token = user.encode_access_token(user.id)
                 print(auth_token)
                 responseObject = {
                     'status': 'success',
@@ -45,10 +156,10 @@ class RegisterAPI(MethodView):
                 return make_response(jsonify(responseObject)), 401
         else:
             responseObject = {
-                'status': 'fail',
+                'status': 'failure',
                 'message': 'User already exists. Please Log in.',
             }
-            return make_response(jsonify(responseObject)), 202
+            return make_response(jsonify(responseObject)), 401
 
 
 class LoginAPI(MethodView):
@@ -58,22 +169,34 @@ class LoginAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
+
         try:
             # fetch the user data
             user = User.query.filter_by(
                 email=post_data.get('email')
             ).first()
+            
+            # authenticate user
             if user and bcrypt.check_password_hash(
                 user.password, post_data.get('password')
             ):
-                auth_token = user.encode_auth_token(user.id)
-                if auth_token:
+                # build refreshToken
+                refreshToken = user.encode_refresh_token(user.id)
+                # build accessToken
+                auth_token = user.encode_access_token(user.id)
+
+                if auth_token and refreshToken:
                     responseObject = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
-                        'auth_token': auth_token
+                        'auth_token': auth_token,
+                        'isAdmin': user.admin
                     }
-                    return make_response(jsonify(responseObject)), 200
+                    res = make_response(jsonify(responseObject))
+                    res.set_cookie('refreshToken', refreshToken, httponly=True)
+                    # print(res.headers)
+                    return res, 200
+                    # return make_response(jsonify(responseObject)), 200
             else:
                 responseObject = {
                     'status': 'fail',
@@ -96,6 +219,7 @@ class UserAPI(MethodView):
     def get(self):
         # get the auth token
         auth_header = request.headers.get('Authorization')
+        # print(request.headers)
         if auth_header:
             try:
                 auth_token = auth_header.split(" ")[1]
@@ -133,6 +257,60 @@ class UserAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
 
+class UsersAPI(MethodView):
+    """
+    Users Resource
+    """
+    def get(self):
+        # verify refreshToken
+        try:
+            refreshToken = request.cookies['refreshToken']
+        except KeyError:
+            responseObject = {
+                'status': 'fail',
+                'message': 'refreshToken not found. Please re-authenticate (login).'
+            }
+            return make_response(jsonify(responseObject)), 401
+
+        # provide an accessToken
+
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObj = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                users = User.query.all()
+                responseObject = {
+                    'status': 'success',
+                    'users': [{
+                        'user_id': user.id,
+                        'email': user.email,
+                        'admin': user.admin,
+                        'registered_on': user.registered_on
+                    } for user in users]
+                }
+                return make_response(jsonify(responseObject)), 200
+            responseObject = {
+                'status': 'fail',
+                'message': resp
+            }
+            return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
 
 class LogoutAPI(MethodView):
     """
@@ -141,6 +319,7 @@ class LogoutAPI(MethodView):
     def post(self):
         # get auth token
         auth_header = request.headers.get('Authorization')
+        # print(request.headers)
         if auth_header:
             auth_token = auth_header.split(" ")[1]
         else:
@@ -180,10 +359,13 @@ class LogoutAPI(MethodView):
             return make_response(jsonify(responseObject)), 403
 
 # define the API resources
-registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')
+users_view = UsersAPI.as_view('users_api')
 logout_view = LogoutAPI.as_view('logout_api')
+registration_view = RegisterAPI.as_view('register_api')
+refreshToken_view = RefreshTokenAPI.as_view('refreshtoken_api')
+deleteUser_view = DeleteUserAPI.as_view('deleteuser_api')
 
 # add Rules for API Endpoints
 auth_blueprint.add_url_rule(
@@ -206,4 +388,18 @@ auth_blueprint.add_url_rule(
     view_func=logout_view,
     methods=['POST']
 )
-
+auth_blueprint.add_url_rule(
+    '/auth/users',
+    view_func=users_view,
+    methods=['GET']
+)
+auth_blueprint.add_url_rule(
+    '/auth/refresh_token',
+    view_func=refreshToken_view,
+    methods=['POST']
+)
+auth_blueprint.add_url_rule(
+    '/auth/delete/<id>',
+    view_func=deleteUser_view,
+    methods=['DELETE', 'GET']
+)

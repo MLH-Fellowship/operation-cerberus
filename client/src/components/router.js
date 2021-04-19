@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 import CustomDrawer from './customDrawer';
 import { OpenDrawerProvider } from './drawerContext';
 import ProtectedRoute from './protectedRoute';
@@ -12,6 +15,7 @@ import Integrations from '../pages/integrations';
 import Explore from '../pages/explore';
 import Settings from '../pages/settings';
 import FourOhFour from '../pages/404';
+import Admin from "../pages/admin";
 
 import { connect } from 'react-redux';
 import {
@@ -20,6 +24,31 @@ import {
 } from '../redux/actions/openDrawerAction';
 
 const Router = (props) => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        refreshToken();
+    }, [])
+
+    const refreshToken = async () => {
+        try {
+            await axios
+                .post(`http://localhost:5000/auth/refresh_token`, {}, {withCredentials: true})
+                .then((res) => {
+                    // console.log(res.data.data.admin);
+                    // setAdmin(res.data.data.admin);
+                    console.log(res.data);
+                    dispatch(res.data.auth_token);
+                    // setLoading(false);
+                })
+                .catch((err) => {
+                    return err;
+                });
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     const handleDrawerOpen = () => {
         props.OpenDrawerAction();
     };
@@ -49,6 +78,7 @@ const Router = (props) => {
                     path='/settings'
                     component={() => <Settings {...props} />}
                 />
+                <ProtectedRoute exact path='/admin-portal' component={Admin} />
                 <ProtectedRoute path='*' component={FourOhFour} />
             </Switch>
         </OpenDrawerProvider>

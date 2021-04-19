@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Layout from '../components/layout';
+import Cookies from 'universal-cookie';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import Zoom from '@material-ui/core/Zoom';
@@ -50,6 +51,9 @@ const Explore = () => {
                 setFlash('');
             }, 3000)
         }
+        const cookies = new Cookies();
+        console.log(cookies.get('myCat'));
+        console.log(cookies.get('specialKey'));
     }, [chart])
 
     const chartChange = ({ target }) => {
@@ -86,6 +90,10 @@ const Explore = () => {
         link.current.click();
         });
     };
+
+    const saveChart = () => {
+        
+    }
 
     const pinOverview = () => {
         // store fileData in redux store
@@ -228,7 +236,7 @@ const Explore = () => {
                     justify='center'
                     container
                     className={classes.spacing}
-                    spacing={3}
+                    spacing={4}
                 >
                     <Grid item>
                     <Button
@@ -238,6 +246,16 @@ const Explore = () => {
                     >
                         Download
                     </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            color='secondary'
+                            variant='contained'
+                            onClick={downloadChart}
+                            // style={{marginLeft: "1rem", marginRight: "1rem"}}
+                            >
+                            Save
+                        </Button>
                     </Grid>
                     <Grid item>
                     <Button 

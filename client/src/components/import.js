@@ -37,10 +37,13 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
             return formData.append(file.name, file, file.name);
         });
 
+        const info = JSON.parse(localStorage.getItem('user'))
+
         // upload file
-        fetch('http://localhost:5000/upload', {
+        fetch('http://localhost:5000/files/upload', {
             method: 'POST',
             headers: {
+                Authorization: `Bearer ${info.token}`,
                 Accept: 'multipart/form-data'
             },
             body: formData
@@ -51,14 +54,14 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
                 if (status === 'success') {
                     setResult({
                         severity: 'success',
-                        message: `${uploads} file(s) successfully imported.`
+                        message: `File successfully uploaded.`
                     });
                     setFileID(id);
                     allowNext(true);
                 } else {
                     setResult({
                         severity: 'warning',
-                        message: 'File import failed, please try again.'
+                        message: 'File upload failed, please try again.'
                     });
                 }
             });
@@ -156,15 +159,20 @@ const Import = ({ allowNext, setFileID, setFileData }) => {
             return( arrData );
         }
         const data = CSVToArray(txt, ",");
+        console.log(data);
         let firstCol = [], secondCol = [];
+        let amt;
         for (let i in data) {
             if (i > 0 && i < data.length - 1) {
                 firstCol.push(data[i][0]);
-                secondCol.push(parseFloat(data[i][1].substring(1).replace(",", "")));
+                amt = data[i][1].replace(",", "");
+                secondCol.push(parseFloat(amt));
+                // secondCol.push(parseFloat(data[i][1].substring(1).replace(",", "")));
             }
         }
         // update file data state
-        setFileData((reformatData(firstCol, secondCol, file[0].file.name.split('_')[0])));
+        const first = file[0].file.name.split('_')[0], last = file[0].file.name.split('_')[1];
+        setFileData((reformatData(firstCol, secondCol, first, last)));
     };
 
     const selectFiles = (files) => {
